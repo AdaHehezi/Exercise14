@@ -1,0 +1,104 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin:0;
+    overflow: hidden;
+    position: relative;
+}
+
+#background-video{
+    position: absolute;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    z-index: -1; 
+}
+
+.search-container {
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.8); 
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.search-bar {
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar input[type="text"] {
+    padding: 10px;
+    width: 300px;
+    border: none;
+    font-size: 16px;
+    outline: none;
+}
+
+.search-bar button {
+    padding: 10px;
+    background-color:white;
+    color: gray;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+}
+
+.search-bar button i {
+    padding-right: 10px; 
+}
+
+table {
+    width: 300px;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-image: url(images/bg.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    max-width: 300px;
+}
+
+.close {
+    float: right;
+    cursor: pointer;
+}
+h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+.blue { color: #4285F4; }
+.green { color: #0F9D58; }
+.yellow { color: #F4B400; }
+.red { color: #DB4437; }
+
+.weather-icon {
+font-size: 100px; 
+}
