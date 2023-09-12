@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Search</title>
     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
@@ -67,14 +68,10 @@
             border-collapse: collapse;
         }
 
-        th, td {
+        td {
             padding: 10px;
             text-align: left;
             border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f2f2f2;
         }
 
         .modal {
@@ -112,11 +109,8 @@
         .yellow { color: #F4B400; }
         .red { color: #DB4437; }
 
-        .weather-image {
-        width: 180px; 
-        height: 180px; 
-        margin: 0 auto;
-        display: block;
+        .weather-icon {
+        font-size: 100px; 
         }
 
     </style>
@@ -168,13 +162,66 @@ let isZipCode = /^\d+$/.test(city);
 let cityName = isZipCode ? await getCityNameByZip(city) : city;
 
 let currentDate = new Date();
-let options = { year: 'numeric', month: 'long', day: 'numeric' };
+
+let options = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    };
+    
 let formattedDate = currentDate.toLocaleDateString(undefined, options);
+
+let weatherIconClass;
+switch (data.weather[0].icon) {
+    case '01d':
+        weatherIconClass = 'wi-day-sunny';
+        break;
+    case '01n':
+        weatherIconClass = 'wi-night-clear';
+        break;
+    case '02d':
+        weatherIconClass = 'wi-day-cloudy';
+        break;
+    case '02n':
+        weatherIconClass = 'wi-night-alt-cloudy';
+        break;
+    case '03d':
+    case '03n':
+    case '04d':
+    case '04n':
+        weatherIconClass = 'wi-cloudy';
+        break;
+    case '09d':
+    case '09n':
+        weatherIconClass = 'wi-showers';
+        break;
+    case '10d':
+    case '10n':
+        weatherIconClass = 'wi-rain';
+        break;
+    case '11d':
+    case '11n':
+        weatherIconClass = 'wi-thunderstorm';
+        break;
+    case '13d':
+    case '13n':
+        weatherIconClass = 'wi-snow';
+        break;
+    case '50d':
+    case '50n':
+        weatherIconClass = 'wi-fog';
+        break;
+    default:
+        weatherIconClass = 'wi-day-sunny'; 
+        break;
+    }
+
+let weatherIcon = `<i class="wi ${weatherIconClass}"></i>`;
 
 let table = `
     <h1>${cityName}</h1>
     <p><strong>${formattedDate}</strong></p>
-    <img src="${imgurl}" alt="weather" class="weather-image"/>
+    <span class="weather-icon">${weatherIcon}</span>
     <table>
     
     <tr>
