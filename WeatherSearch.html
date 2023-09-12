@@ -124,73 +124,91 @@
     <script>
     let city;
 
-    async function clickHandler() {
-    city = document.getElementById('city').value;
+async function clickHandler() {
+city = document.getElementById('city').value;
 
-    let apiKey = '93f26e3c57081a6210de53b8dcfdfea4'; 
-    let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+let apiKey = '93f26e3c57081a6210de53b8dcfdfea4'; 
+let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
 
+try {
+    let response = await fetch(url);
+    if(response.ok){
+        let data = await response.json();
+        displayData(data);
+    }else{
+        displayError("City not found. Please try again.");
+    }
+    
+} catch (error) {
+    console.error('Error fetching weather data:', error);
+    document.getElementById('weather').innerHTML = 'Error fetching weather data.';
+   }
+}
+
+async function getCityNameByZip(zip) {
+    let zipApiUrl = `https://api.zippopotam.us/us/${zip}`;
     try {
-        
-        let response = await fetch(url);
-        if(response.ok){
+        let response = await fetch(zipApiUrl);
+        if (response.ok) {
             let data = await response.json();
-            displayData(data);
-        }else{
-            displayError("City not found. Please try again.");
+            return data.places[0]['place name'];
+        } else {
+            return 'Unknown City';
         }
-        
     } catch (error) {
-        console.error('Error fetching weather data:', error);
-        document.getElementById('weather').innerHTML = 'Error fetching weather data.';
+        console.error('Error fetching city data:', error);
+        return 'Unknown City';
     }
-    }
+}
 
-    function displayData(data) {
-    let imgurl = `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
-    let cityName=data.name;
-    let currentDate = new Date();
-    let options = { year: 'numeric', month: 'long', day: 'numeric' };
-    let formattedDate = currentDate.toLocaleDateString(undefined, options);
+async function displayData(data) {
+let imgurl = `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
 
-    let table = `
-        <h1>Weather in ${cityName}</h1>
-        <p><strong>${formattedDate}</strong></p>
-        <img src="${imgurl}" alt="weather" class="weather-image"/>
-        <table>
-        
-        <tr>
-            <td>Weather</td>
-            <td>${data.weather[0].main}</td>
-        </tr>
-        <tr>
-            <td>Low Temp</td>
-            <td>${Math.floor(data.main.temp_min - 273)} °c</td>
-        </tr>
-        <tr>
-            <td>High Temp</td>
-            <td>${Math.floor(data.main.temp_max - 273)} °c</td>
-        </tr>
-        <tr>
-            <td>Wind</td>
-            <td>${data.wind.speed} mph</td>
-        </tr>
-        
-        </table>`;
+let isZipCode = /^\d+$/.test(city);
+let cityName = isZipCode ? await getCityNameByZip(city) : city;
 
-   
-        document.getElementById('weather').innerHTML = table;
-        document.getElementById('modal').style.display = 'block';
-    }
+let currentDate = new Date();
+let options = { year: 'numeric', month: 'long', day: 'numeric' };
+let formattedDate = currentDate.toLocaleDateString(undefined, options);
 
-    function displayError(message) {
-        document.getElementById('weather').innerHTML = message;
-        document.getElementById('modal').style.display = 'block';
-    }
+let table = `
+    <h1>${cityName}</h1>
+    <p><strong>${formattedDate}</strong></p>
+    <img src="${imgurl}" alt="weather" class="weather-image"/>
+    <table>
+    
+    <tr>
+        <td>Weather</td>
+        <td>${data.weather[0].main}</td>
+    </tr>
+    <tr>
+        <td>Low Temp</td>
+        <td>${Math.floor(data.main.temp_min - 273)} °c</td>
+    </tr>
+    <tr>
+        <td>High Temp</td>
+        <td>${Math.floor(data.main.temp_max - 273)} °c</td>
+    </tr>
+    <tr>
+        <td>Wind</td>
+        <td>${data.wind.speed} mph</td>
+    </tr>
+    
+    </table>`;
 
-    function closeModal() {
-         document.getElementById('modal').style.display = 'none';
-    }
+
+    document.getElementById('weather').innerHTML = table;
+    document.getElementById('modal').style.display = 'block';
+}
+
+function displayError(message) {
+    document.getElementById('weather').innerHTML = message;
+    document.getElementById('modal').style.display = 'block';
+}
+
+function closeModal() {
+     document.getElementById('modal').style.display = 'none';
+}
     </script>
 </head>
 <body>
