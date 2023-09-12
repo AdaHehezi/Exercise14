@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Search</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
@@ -88,7 +89,10 @@
         }
 
         .modal-content {
-            background-color:rgba(255,255,255,0.8);
+            background-image: url(images/bg.jpg);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
             margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
@@ -108,11 +112,19 @@
         .yellow { color: #F4B400; }
         .red { color: #DB4437; }
 
-    </style>
-    <script>
-        let city;
+        .weather-image {
+        width: 180px; 
+        height: 180px; 
+        margin: 0 auto;
+        display: block;
+        }
 
-async function clickHandler() {
+    </style>
+   
+    <script>
+    let city;
+
+    async function clickHandler() {
     city = document.getElementById('city').value;
 
     let apiKey = '93f26e3c57081a6210de53b8dcfdfea4'; 
@@ -121,49 +133,58 @@ async function clickHandler() {
     try {
         
         let response = await fetch(url);
-        let data = await response.json();
-
-        displayData(data);
+        if(response.ok){
+            let data = await response.json();
+            displayData(data);
+        }else{
+            displayError("City not found. Please try again.");
+        }
+        
     } catch (error) {
         console.error('Error fetching weather data:', error);
         document.getElementById('weather').innerHTML = 'Error fetching weather data.';
     }
-}
+    }
 
-function displayData(data) {
+    function displayData(data) {
     let imgurl = `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
+    let cityName=data.name;
+    let currentDate = new Date();
+    let options = { year: 'numeric', month: 'long', day: 'numeric' };
+    let formattedDate = currentDate.toLocaleDateString(undefined, options);
 
     let table = `
-        <h2>City:${city}</h2>
-        <img src="${imgurl}" alt="weather"/>
+        <h1>Weather in ${cityName}</h1>
+        <p><strong>${formattedDate}</strong></p>
+        <img src="${imgurl}" alt="weather" class="weather-image"/>
         <table>
-        <tr>
-            <th> </th>
-            <th> </th>
-        </tr>
+        
         <tr>
             <td>Weather</td>
             <td>${data.weather[0].main}</td>
         </tr>
         <tr>
-            <td>Min Temp (°C)</td>
-            <td>${Math.floor(data.main.temp_min - 273)}</td>
+            <td>Low Temp</td>
+            <td>${Math.floor(data.main.temp_min - 273)} °c</td>
         </tr>
         <tr>
-            <td>Max Temp (°C)</td>
-            <td>${Math.floor(data.main.temp_max - 273)}</td>
+            <td>High Temp</td>
+            <td>${Math.floor(data.main.temp_max - 273)} °c</td>
         </tr>
         <tr>
-            <td>Wind Speed (km/h)</td>
-            <td>${data.wind.speed}</td>
+            <td>Wind</td>
+            <td>${data.wind.speed} mph</td>
         </tr>
         
         </table>`;
 
    
         document.getElementById('weather').innerHTML = table;
+        document.getElementById('modal').style.display = 'block';
+    }
 
-    
+    function displayError(message) {
+        document.getElementById('weather').innerHTML = message;
         document.getElementById('modal').style.display = 'block';
     }
 
@@ -195,11 +216,11 @@ function displayData(data) {
             <span class="green">h</span>
         </h1>
         <div class="search-bar">
-            <input type="text" id="city" placeholder="Search for a city">
+            <input type="text" id="city" placeholder="Search for a city or zipcode">
             <button onclick="clickHandler()">
                 <i class="fas fa-search"></i> 
             </button>
-        </div>
+        </div>  
     </div>
 
     
