@@ -2,9 +2,11 @@ let city;
 
 async function clickHandler() {
 city = document.getElementById('city').value;
+let isZipCode = /^\d+$/.test(city);
+let cityName = isZipCode ? await getCityNameByZip(city) : city;
 
 let apiKey = '93f26e3c57081a6210de53b8dcfdfea4'; 
-let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+let url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}`;
 
 try {
     let response = await fetch(url);
